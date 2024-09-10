@@ -1,0 +1,38 @@
+networks:
+  web:
+    external: true
+
+services:
+  db.postgres:
+    image: postgres:16.4-alpine
+    volumes:
+      - /tmp/db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: password
+    networks:
+      - web
+
+  api.rails:
+    build: ./plataform-api
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    volumes:
+      - ./plataform-api:/plataform-api/
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db.postgres
+    networks:
+      - web
+    
+  web.node:
+    build: ./plataform-front
+    volumes: 
+      - ./plataform-front:/app
+      - node_volume:/app/node_modules
+    ports:
+      - "8080:8080"
+    depends_on:
+      - api.rails
+
+volumes:
+  node_volume:
