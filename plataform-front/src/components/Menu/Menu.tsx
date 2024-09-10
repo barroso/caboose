@@ -15,7 +15,7 @@ export default function Menu() {
       to: "/"
     },
     {
-      title: "Scanner",
+      title: "Analytic",
       to: "/"
     },
     {
